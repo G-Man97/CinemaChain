@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Скоро в кино</title>
+    <link rel="stylesheet" type="text/css" href="/css/movies.css">
+</head>
+<body style="background-color: rgb(56, 1, 4); margin: 0;">
+<div class="root">
+    <div class="content">
+        <th:block th:insert="~{fragment :: header}"></th:block>
+        <th:block th:insert="~{fragment :: menu}"></th:block>
+        <div style="margin: 20px 0 0;">
+            <div id="releases-container" class="releases-container">
+                <a th:id="${movie.id}" class="releases-item" th:each="movie : ${movies}" th:href="@{'/movies/soon/' + ${movie.id}}">
+                    <div class="release-poster">
+                        <img alt="Постер релиза" th:src="@{/images/{fileName}(fileName=${movie.poster})}" style="width: 265px; height: 374px; border-radius: 16px;">
+                    </div>
+                    <div class="movie-description">
+                        <span th:text="|${movie.title} (${movie.pegi})|">Описание</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <th:block th:insert="~{fragment :: footer}"></th:block>
+    </div>
+</div>
+</body>
+</html>

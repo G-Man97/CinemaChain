@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cеанс</title>
+    <style>
+
+        .seatFree {
+            font-size: 17px;
+            text-align: center;
+            color: white;
+            height: 23px;
+            width: 23px;
+            margin-right: 4px;
+            background-color: #999999;
+            border: 2px solid #999999;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .seatTaken {
+            font-size: 17px;
+            text-align: center;
+            color: white;
+            height: 23px;
+            width: 23px;
+            margin-right: 4px;
+            background-color: black;
+            border: 2px solid black;
+            display: inline-block;
+        }
+
+        .seatBooked {
+            font-size: 17px;
+            text-align: center;
+            color: white;
+            height: 23px;
+            width: 23px;
+            margin-right: 4px;
+            background-color: #999999;
+            border: 2px solid red;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .passageBetween {
+            height: 8px;
+            width: 100%;
+            display: block;
+        }
+
+        .selected {
+            font-size: 17px;
+            text-align: center;
+            color: white;
+            height: 23px;
+            width: 23px;
+            margin-right: 4px;
+            display: inline-block;
+            cursor: pointer;
+            background-color: red;
+            border: 2px solid red;
+        }
+
+        .resultSelected {
+            border: 2px solid red;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .result {
+            font-size: 17px;
+            display: inline-block;
+            max-height: 375px;
+            overflow-y: auto;
+            margin-right: 8px;
+        }
+
+        .cinemaHall {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<div id="content" class='cinemaHall'>
+    <div>
+        <input id="filmSessionId" type="hidden" name="filmSessionId" th:value="${seanceInfo.filmSessionId}"/>
+        <p>
+            <span id="movieTitle" th:text="${seanceInfo.movieTitle}">Movie title</span>
+        </p>
+        <p>
+            <span id="date" th:text="${seanceInfo.date}">Date</span>
+            <span id="cinemaName" th:text="${seanceInfo.cinemaName}">Cinema name</span>
+        </p>
+        <p>Зал
+            <span id="hall" th:text="${seanceInfo.hallNumber}">Hall</span>
+        </p>
+        <p>Начало в
+            <span id="beginSession" th:text="${seanceInfo.beginSession}">Begin session</span>
+        </p>
+        <p>Продолжительность
+            <span id="duration" th:text="${seanceInfo.duration}">Duration</span>
+        </p>
+    </div>
+
+    <th:block th:each="seat, iterStat : ${seats}">
+
+        <div th:if="${seat.status.name() == 'FREE'}" class="seatFree"
+             th:data-seat="${seat.id}"
+             th:data-row="${seat.row}"
+             th:data-no="${seat.seatNo}"
+             th:data-cost="${seat.ticketCost}">
+            <span th:text="${seat.seatNo}">SeatNo</span>
+        </div>
+
+        <div th:if="${seat.status.name() == 'TAKEN'}" class="seatTaken">
+            <span style="color: black;" th:text="${seat.seatNo}">SeatNo</span>
+        </div>
+
+        <div th:if="${seat.status.name() == 'BOOKED'}" class="seatBooked">
+            <span th:text="${seat.seatNo}">SeatNo</span>
+        </div>
+
+        <div th:if="${!iterStat.last && seat.row != seats.get(iterStat.index + 1).row}" class="passageBetween"></div>
+    </th:block><br>
+</div>
+
+<div id="bay-seats">
+    <div class="result"><span>Выбранные места:</span><br></div>
+    <div>
+        <button type="button" onclick="baySelectedSeats()">Купить билеты</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $('.seatFree').on('click', function (e) {
+        // если первый раз кликнули билет выкупили,
+        // если повторно значит вернули билет
+        $(e.currentTarget).toggleClass('selected');
+        showSelectedSeats();
+    });
+
+    function baySelectedSeats() {
+        let seats = [];
+        //ищем все места купленные и показываем список выкупленных мест
+        $.each($('.seatFree.selected'), function (key, item) {
+            let ticket = {
+                title: document.getElementById("movieTitle").textContent,
+                duration: document.getElementById("duration").textContent,
+                beginSession: document.getElementById("beginSession").textContent,
+                cinemaName: document.getElementById("cinemaName").textContent,
+                hallNumber: document.getElementById("hall").textContent,
+                date: document.getElementById("date").textContent,
+                seatId: $(item).data().seat,
+                row: $(item).data().row,
+                seatNo: $(item).data().no,
+                cost: $(item).data().cost,
+                filmSessionId: document.getElementById("filmSessionId").value
+            };
+            seats.push(ticket);
+            }
+        )
+        if (seats.length !== 0) {
+            let ajax = $.ajax({
+                data: JSON.stringify(seats),
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                url: 'http://localhost:8080/bay-ticket',
+                success: function (tickets) {
+                    let content = document.getElementById("content");
+                    content.innerHTML = '';
+                    document.getElementById("bay-seats").innerHTML = '';
+                    let i = 0;
+                    while (i < tickets.length) {
+                        let currentTicket = tickets[i];
+                        content.innerHTML += '<div id="' + currentTicket.id + '" style="border: 2px solid red; margin: 10px;"></div>';
+                        let ticketDiv = document.getElementById(currentTicket.id);
+
+                        ticketDiv.innerHTML += '<p><span>' + currentTicket.movieTitle + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Длительность:<span>' + currentTicket.movieDuration + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Кинотеатр:<span>' + currentTicket.cinemaName + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Зал:<span>' + currentTicket.hallNumber + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Ряд:<span>' + currentTicket.row + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Место:<span>' + currentTicket.seatNo + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Дата:<span>' + currentTicket.date + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Начало в:<span>' + currentTicket.beginSession + '</span></p>';
+                        ticketDiv.innerHTML += '<p>Цена билета:<span>' + currentTicket.cost + ' ₽</span></p>';
+                        i++;
+                    }
+                }
+            });
+        } else {
+            alert("Места не выбраны!");
+        }
+    }
+
+    function showSelectedSeats() {
+        result = '<span>Выбранные места:</span><br>';
+        //ищем все места купленные и показываем список выкупленных мест
+        $.each($('.seatFree.selected'), function (key, item) {
+            result += '<div class="resultSelected"><span>Ряд: ' + $(item).data().row +
+                            '<br>Место: ' + $(item).data().no +
+                            '<br>Цена: ' + $(item).data().cost +
+                        '</span>' +
+                    '</div>';
+        });
+
+        $('.result').html(result);
+    }
+</script>
+</body>
+</html>

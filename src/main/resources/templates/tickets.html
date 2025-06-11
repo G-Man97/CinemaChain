@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${'Билеты на ' + tickets.get(0).movieTitle}">Title</title>
+</head>
+<body>
+<div id="content">
+    <div style="border: 2px solid red; margin: 10px;"
+         th:each="ticket : ${tickets}">
+
+        <p><span th:text="${ticket.movieTitle}">Movie title</span></p>
+
+        <p>Длительность:
+            <span th:text="${ticket.movieDuration}">Duration</span>
+        </p>
+<!--        <p>Возрастное ограничение:-->
+<!--            <span th:text="${movie.pegi}">Pegi</span>-->
+<!--        </p>-->
+        <p>Кинотеатр:
+            <span th:text="${ticket.cinemaName}">Duration</span>
+        </p>
+        <p>Зал
+            <span th:text="${ticket.hallNumber}">Duration</span>
+        </p>
+        <p>Ряд
+            <span th:text="${ticket.row}">Duration</span>
+        </p>
+        <p>Место
+            <span th:text="${ticket.seatNo}">Duration</span>
+        </p>
+        <p>Дата
+            <span th:text="${ticket.date}">Duration</span>
+        </p>
+        <p>Начало в
+            <span th:text="${ticket.beginSession}">Duration</span>
+        </p>
+        <p>Цена билета
+            <span th:text="${ticket.cost + ' ₽'}">Duration</span>
+        </p>
+    </div>
+</div>
+</body>
+</html>

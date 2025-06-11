@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Отредактировать фильм</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+</head>
+<body>
+<div id="content">
+
+    <h2>Отредактировать фильм</h2>
+
+    <form th:action="@{'/admin/movies/' + ${movie.id} + '/update'}" enctype="multipart/form-data" method="post">
+
+        <input type="hidden" name="id" th:value="${movie.id}">
+
+        <input type="hidden" name="isItInRent" th:value="${movie.isItInRent}">
+
+        <div class="field">
+            <div>
+                <label for="title">Название фильма:
+                    <input type="text" name="title" id="title" th:value="${movie.title}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('title')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('title')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="premiere">Премьера:
+                    <input type="date" name="premiere" id="premiere" th:value="${movie.premiere}"
+                    th:readonly="${movie.isItInRent}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('premiere')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('premiere')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="rentEnd">В прокате до:
+                    <input type="date" name="rentEnd" id="rentEnd" th:value="${movie.rentEnd}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('rentEnd') or errors.hasGlobalErrors()}">
+                    <ul class="error">
+
+                        <li th:each="error : ${errors.getFieldErrors('rentEnd')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+
+                        <li th:each="global : ${errors.getGlobalErrors()}"
+                            th:text="${global.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="duration">Длительность:
+                    <input type="text" name="duration" id="duration" th:value="${movie.duration}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('duration')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('duration')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="pegi">Возрастное ограничение:
+                    <select name="pegi" id="pegi">
+                        <option th:each="pegi : ${pegis}"
+                                th:text="${pegi.value}"
+                                th:selected="${pegi == movie.pegi}"
+                                th:value="${pegi}">Pegi
+                        </option>
+                    </select>
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('pegi')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('pegi')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="genre">Жанр:
+                    <input type="text" name="genre" id="genre" th:value="${movie.genre}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('genre')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('genre')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="countries">Страна(-ы):
+                    <input type="text" name="countries" id="countries" th:value="${movie.countries}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('countries')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('countries')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="composer">Композитор:
+                    <input type="text" name="composer" id="composer" th:value="${movie.composer}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('composer')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('composer')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="producer">Режисёр:
+                    <input type="text" name="producer" id="producer" th:value="${movie.producer}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('producer')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('producer')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="actors">Актёры:
+<!--                    <input type="text" name="actors" id="actors" th:value="${movie.actors}">-->
+                    <textarea name="actors" id="actors" rows="3" cols="60"
+                              th:text="${movie.actors}"></textarea>
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('actors')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('actors')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="description">Описание:
+                    <textarea name="description" id="description" rows="10" cols="60"
+                              th:text="${movie.description}"></textarea>
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('description')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('description')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+
+        <button type="submit">Отредактировать фильм</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменить постер для фильма</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+</head>
+<body>
+<div id="content">
+
+    <h2>Изменить постер для фильма</h2>
+
+    <form th:action="@{/admin/movies/{id}/poster/update(id=${movie.id})}" enctype="multipart/form-data" method="post">
+
+        <input type="hidden" name="movieId" th:value="${movie.id}">
+
+        <div id="posterInfo" class="field">
+            <div>
+                <label for="poster">Постер:
+                    <input type="file" accept="image/*" name="poster" id="poster" onchange="checkFileSize(this)">
+                    <img id="image" alt="Постер релиза" th:src="@{/images/{fileName}(fileName=${movie.poster})}" style="width: 265px; height: 374px; border-radius: 16px;">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div id="posterErrors">
+                    <ul id="errorList" class="error">
+                        <li th:if="${!errors.hasFieldErrors('poster')}">Пожалуйста, загрузите изображение заново!</li>
+                        <th:block th:if="${errors.hasFieldErrors('poster')}">
+                            <li th:each="error : ${errors.getFieldErrors('poster')}"
+                                th:text="${error.getDefaultMessage()}"></li>
+                        </th:block>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+
+        <button type="submit">Изменить постер</button>
+    </form>
+</div>
+
+<script>
+    function checkFileSize(posterInput) {
+        if (posterInput.files[0].size > 5242880) {
+            if (document.getElementById('posterErrors') != null) {
+                let errorList = document.getElementById('errorList');
+                errorList.innerHTML = '';
+                errorList.innerHTML += '<li>Размер изображения не должен превышать 5МБ!</li>';
+                posterInput.value = '';
+            } else {
+                document.getElementById('posterInfo').innerHTML += '<div id="posterErrors">\n' +
+                                                                        '<ul id="errorList" class="error">' +
+                                                                            '<li>Размер изображения не должен превышать 5МБ!</li>' +
+                                                                        '</ul>' +
+                                                                    '</div>';
+                posterInput.value = '';
+            }
+        }
+    }
+</script>
+</body>
+</html>

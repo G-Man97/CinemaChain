@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Афиша - Сеть кинотеатров "Мир Кино"</title>
+    <link rel="stylesheet" type="text/css" href="/css/movies.css"> <!--th:href="@{/css/movies.css}"-->
+</head>
+<body style="background-color: rgb(56, 1, 4); margin: 0;">
+<div class="root">
+    <div class="content">
+        <th:block th:insert="~{fragment :: header}"></th:block>
+        <th:block th:insert="~{fragment :: menu}"></th:block>
+        <div style="margin: 20px 0 0;">
+            <div id="releases-container" class="releases-container">
+                <a th:id="${movie.id}" class="releases-item" th:each="movie : ${movies}" th:href="@{'movies/' + ${movie.id}}">
+                    <div class="release-poster">
+                        <img alt="Постер релиза" th:src="@{/images/{fileName}(fileName=${movie.poster})}" style="width: 265px; height: 374px; border-radius: 16px;">
+                    </div>
+                    <div class="movie-description">
+                        <span th:text="|${movie.title} (${movie.pegi})|">Описание</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <th:block th:insert="~{fragment :: footer}"></th:block>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    let map = {};
+    let countCinema = 1;
+
+    // window.onload = () => {refreshSeances('today');};
+
+    function loadMovieInfo(movieId) {
+        fetch('http://localhost:8080/movies/' + movieId)
+            .then((response) => response.json())
+            .then(movie => {
+                map = movie.filmSessionsByCinema;
+                let content = document.getElementById('releases-container');
+                content.innerHTML = '';
+                content.innerHTML += '<div id="poster" style="position: relative; width: 263px; min-width: 263px; margin: 0 30px 0 0;"></div>';
+                content.innerHTML += '<div id="movieInfo" style="min-width: calc(100% - 293px); max-width: calc(100% - 293px);"></div>';
+
+                let poster = document.getElementById('poster');
+                poster.innerHTML += ' <img alt="Постер релиза" src="/images/' + movie.poster + '" style="width: 265px; height: 374px; border-radius: 16px;">';
+
+                let movieInfo = document.getElementById('movieInfo');
+                movieInfo.innerHTML += '<div style="font-size: .9375rem; color: #727276;">'+ movie.genre + '</div>';
+                movieInfo.innerHTML += '<div style="font-weight: bold; font-size: 2.25rem; margin: 6px 0 12px; color: #000;">'+ movie.title + '</div>';
+                movieInfo.innerHTML += '<div id="release-info" style="padding: 26px 40px 26px 30px; background-color: #f6f5f3; border-radius: 8px;"></div>';
+
+                let releaseInfo = document.getElementById('release-info');
+                releaseInfo.innerHTML += '<div id="producer" class="release-info-item"></div>';
+
+                let releaseInfoItem = document.getElementById('producer');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">Режиссёр</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description">' + movie.producer + '</span>';
+
+                releaseInfo.innerHTML += '<div id="premiere" class="release-info-item"></div>';
+                releaseInfoItem = document.getElementById('premiere');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">Премьера</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description" ">' + movie.premiere + '</span>';
+
+                releaseInfo.innerHTML += '<div id="renEnd" class="release-info-item"></div>';
+                releaseInfoItem = document.getElementById('renEnd');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">В прокате до</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description" ">' + movie.rentEnd + '</span>';
+
+                releaseInfo.innerHTML += '<div id="duration" class="release-info-item"></div>';
+                releaseInfoItem = document.getElementById('duration');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">Продолжительность</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description" ">' + movie.duration + '</span>';
+
+                releaseInfo.innerHTML += '<div id="pegi" class="release-info-item"></div>';
+                releaseInfoItem = document.getElementById('pegi');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">Возрастное ограничение</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description" ">' + movie.pegi + '</span>';
+
+                releaseInfo.innerHTML += '<div id="countries" class="release-info-item"></div>';
+                releaseInfoItem = document.getElementById('countries');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">Страна</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description" ">' + movie.countries + '</span>';
+
+                releaseInfo.innerHTML += '<div id="composer" class="release-info-item"></div>';
+                releaseInfoItem = document.getElementById('composer');
+                releaseInfoItem.innerHTML += '<span class="release-info-item-name" ">Композитор</span>';
+                releaseInfoItem.innerHTML += '<span class="release-info-item-description" ">' + movie.composer + '</span>';
+
+                movieInfo.innerHTML += '<div id="release-text" style="font-size: .9375rem; line-height: 21px; margin: 32px 0 0; color: #000;"></div>';
+                document.getElementById('release-text').innerHTML += '<p>' + movie.description + '</p>';
+
+                movieInfo.innerHTML += '<div id="schedule">\n' +
+                    '        <div id="schedule-calendar">\n' +
+                    '            <button id="today" type="button"\n' +
+                    '                    value=""\n' +
+                    '                    onclick="refreshSeances(this.id)">\n' +
+                    '                Сегодня</button>\n' +
+                    '            <button id="tomorrow" type="button"\n' +
+                    '                    value=""\n' +
+                    '                    onclick="refreshSeances(this.id)">\n' +
+                    '                Завтра</button>\n' +
+                    '        </div>\n' +
+                    '        <div id="seances"></div>\n' +
+                    '    </div>';
+
+                const date = new Date();
+                document.getElementById('today').value = date.toISOString().slice(0, 10);
+
+                date.setDate(date.getDate() + 1);
+                document.getElementById('tomorrow').value = date.toISOString().slice(0, 10);
+
+                refreshSeances('today');
+            })
+    }
+
+    function refreshSeances(buttonId) {
+        let buttonValue = document.getElementById(buttonId).value;
+        let seances = document.getElementById("seances");
+        seances.innerHTML = '';
+        seances.innerHTML += '<div id="seancesForCinema"></div>';
+
+        let seancesForCinema = document.getElementById("seancesForCinema");
+        let flag = false;
+
+        for (let [key, value] of Object.entries(map)) {
+
+            flag = false;
+            let j = 0;
+
+            while (flag === false && j < value.length) {
+                if (value[j].date === buttonValue) {
+                    flag = true;
+                }
+                j++;
+            }
+
+            if (flag === true) {
+                seancesForCinema.innerHTML += '<p><span id="cinemaName"></span></p>';
+                let cinemaName = document.getElementById("cinemaName");
+                let index = key.indexOf('name=') + 'name='.length;
+                cinemaName.textContent = key.substring(index, key.length - 1);
+                cinemaName.setAttribute('id', 'cinemaName' + countCinema);
+                countCinema++;
+
+                for (let i = 0; i < value.length; i++) {
+
+                    if (value[i].date === buttonValue) {
+
+                        seancesForCinema.innerHTML += '<a id="link"></a>';
+                        let link = document.getElementById("link");
+                        link.href = '/seats/' + value[i].id;
+                        link.innerHTML = '<button id="linkButton" type="button"></button>';
+                        link.setAttribute('id', 'link' + value[i].id);
+
+                        let linkButton = document.getElementById("linkButton");
+                        linkButton.innerHTML = '<span id="beginSession"></span><br><span id="hallNumber"></span>';
+
+                        let beginSession = document.getElementById("beginSession");
+                        let hallNumber = document.getElementById("hallNumber");
+
+                        beginSession.textContent = value[i].beginSession.substring(0, 5);
+                        hallNumber.textContent = 'Зал ' + value[i].cinemaHall.number;
+
+                        linkButton.setAttribute('id', 'linkButton' + value[i].id);
+                        beginSession.setAttribute('id', 'beginSession' + value[i].id);
+                        hallNumber.setAttribute('id', 'hallNumber' + value[i].id);
+                    }
+                }
+            }
+            seancesForCinema.innerHTML += '<br><br>'
+        }
+    }
+</script>
+
+
+</body>
+</html>

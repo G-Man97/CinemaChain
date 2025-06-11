@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Администрирование</title>
+</head>
+<body>
+<div id="content">
+
+    <h2>Выберите действие</h2>
+
+    <a href="/admin/movie">
+        <button type="button">Добавить фильм</button>
+    </a><br><br>
+
+    <div>
+        <h4>Добавить сеанс для фильма:</h4>
+        <label for="movieIdForSession">
+            <select name="movieId" id="movieIdForSession" onchange="changeSessionLink(this.value)">
+                <option hidden selected value=""></option>
+                <option th:each="movie : ${movies}"
+                        th:text="${movie.title}"
+                        th:value="${movie.id}">Movie title</option>
+            </select>
+        </label><br><br>
+
+        <a id="sessionLink" href="#">
+            <button type="button">Добавить сеанс</button>
+        </a><br><br>
+    </div>
+
+    <div>
+        <h4>Изменить инф-ю о фильме</h4>
+        <label for="movieIdForUpdate">Для какого фильма:
+            <select name="movieId" id="movieIdForUpdate" onchange="changeUpdateLink(this.value)">
+                <option hidden selected value=""></option>
+                <option th:each="movie : ${movies}"
+                        th:text="${movie.title}"
+                        th:value="${movie.id}">Movie title</option>
+            </select>
+        </label><br><br>
+
+        <a id="updateLink" href="#">
+            <button type="button">Изменить</button>
+        </a>
+    </div>
+
+    <div>
+        <h4>Изменить постер к фильму</h4>
+        <label for="movieIdForPosterUpdate">Для какого фильма:
+            <select name="movieId" id="movieIdForPosterUpdate" onchange="changeUpdatePosterLink(this.value)">
+                <option hidden selected value=""></option>
+                <option th:each="movie : ${movies}"
+                        th:text="${movie.title}"
+                        th:value="${movie.id}">Movie title</option>
+            </select>
+        </label><br><br>
+
+        <a id="updatePosterLink" href="#">
+            <button type="button">Изменить</button>
+        </a>
+    </div>
+</div>
+<script>
+    function changeUpdateLink(movieId) {
+        let link = document.getElementById("updateLink");
+        link.href = "/admin/movies/" + movieId + "/update";
+    }
+
+    function changeSessionLink(movieId) {
+        let link = document.getElementById("sessionLink");
+        link.href = "/admin/film-session/" + movieId;
+    }
+
+    function changeUpdatePosterLink(movieId) {
+        let link = document.getElementById("updatePosterLink");
+        link.href = "/admin/movies/" + movieId + "/poster/update";
+    }
+</script>
+</body>
+</html>

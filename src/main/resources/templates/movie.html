@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${movie.title}">Movie</title>
+    <link rel="stylesheet" type="text/css" href="/css/movies.css">
+</head>
+<body style="background-color: rgb(56, 1, 4); margin: 0;">
+<div class="root">
+    <div class="content">
+        <th:block th:insert="~{fragment :: header}"></th:block>
+        <th:block th:insert="~{fragment :: menu}"></th:block>
+        <div style="margin: 20px 0 0;">
+            <div id="releases-container" style="display: flex; flex-wrap: wrap; max-width: 1240px; padding: 0 50px;">
+                <div id="poster" style="position: relative; width: 263px; min-width: 263px; margin: 0 30px 0 0;">
+                    <img alt="Постер релиза" th:src="@{'/images/' + ${movie.poster}}" style="width: 265px; height: 374px; border-radius: 16px;">
+                </div>
+                <div id="movieInfo" style="min-width: calc(100% - 293px); max-width: calc(100% - 293px);">
+                    <span style="font-size: .9375rem; color: #727276;" th:text="${movie.genre}">Жанр</span><br>
+                    <span style="font-weight: bold; font-size: 2.25rem; margin: 6px 0 12px; color: #000;" th:text="${movie.title}">Название</span>
+                    <div id="release-info" style="padding: 26px 40px 26px 30px; margin: 15px 0 0; background-color: #f6f5f3; border-radius: 8px;">
+                        <div id="producer" class="release-info-item">
+                            <span class="release-info-item-name">Режиссёр</span>
+                            <span class="release-info-item-description" th:text="${movie.producer}">Режиссёр</span>
+                        </div>
+                        <div id="premiere" class="release-info-item">
+                            <span class="release-info-item-name">Премьера</span>
+                            <span class="release-info-item-description" th:text="${movie.premiere}">Премьера</span>
+                        </div>
+                        <div id="renEnd" class="release-info-item">
+                            <span class="release-info-item-name">В прокате до</span>
+                            <span class="release-info-item-description" th:text="${movie.rentEnd}">В прокате до</span>
+                        </div>
+                        <div id="duration" class="release-info-item">
+                            <span class="release-info-item-name">Продолжительность</span>
+                            <span class="release-info-item-description" th:text="${movie.duration}">Продолжительность</span>
+                        </div>
+                        <div id="pegi" class="release-info-item">
+                            <span class="release-info-item-name">Возрастное ограничение</span>
+                            <span class="release-info-item-description" th:text="${movie.pegi.value}">Возрастное ограничение</span>
+                        </div>
+                        <div id="countries" class="release-info-item">
+                            <span class="release-info-item-name">Страна(-ы)</span>
+                            <span class="release-info-item-description" th:text="${movie.countries}">Страна(-ы)</span>
+                        </div>
+                        <div id="composer" class="release-info-item">
+                            <span class="release-info-item-name">Композитор</span>
+                            <span class="release-info-item-description" th:text="${movie.composer}">Композитор</span>
+                        </div>
+                        <div id="actors" class="release-info-item">
+                            <span class="release-info-item-name">Актёры</span>
+                            <span class="release-info-item-description" th:text="${movie.actors}">Актёры</span>
+                        </div>
+                    </div>
+                    <div id="release-text" style="font-size: .9375rem; line-height: 21px; margin: 32px 0 0; color: #000;">
+                        <p th:text="${movie.description}">Описание</p>
+                    </div>
+                    <div th:if="${movie.isItInRent.booleanValue()}" id="schedule">
+                        <div id="schedule-calendar" style="border-radius: 25px; position: relative; z-index: 120; width: 100%; overflow: hidden;">
+                            <div id="calendar" style="padding: 8px 12px; margin: -1px 0 0; display: flex; background-color: #f2f2f5;">
+                                <div style="display: flex;">
+                                    <button id="today" type="button" class="calendar-date"
+                                            th:value="${#dates.format(#dates.createToday(), 'yyyy-MM-dd')}"
+                                            onclick="refreshSeances(this.id)">
+                                        Сегодня</button>
+                                    <button id="tomorrow" type="button" class="calendar-date"
+                                            th:with="util=${T(org.apache.commons.lang3.time.DateUtils)},date=${util.addDays(#dates.createToday(), 1)}"
+                                            th:value="${#dates.format(date, 'yyyy-MM-dd')}"
+                                            onclick="refreshSeances(this.id)">
+                                        Завтра</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="seances"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <th:block th:insert="~{fragment :: footer}"></th:block>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    const map = /*[[${movie.filmSessionsByCinema}]]*/ {};
+    let countCinema = 1;
+
+    window.onload = () => {refreshSeances('today');};
+
+    function refreshSeances(buttonId) {
+        let buttonValue = document.getElementById(buttonId).value;
+        let seances = document.getElementById("seances");
+        seances.innerHTML = '';
+        seances.innerHTML += '<div id="seancesForCinema"></div>';
+
+        let seancesForCinema = document.getElementById("seancesForCinema");
+        let flag = false;
+
+        for (let [key, value] of Object.entries(map)) {
+
+            flag = false;
+            let j = 0;
+
+            while (flag === false && j < value.length) {
+                if (value[j].date === buttonValue) {
+                    flag = true;
+                }
+                j++;
+            }
+
+            if (flag === true) {
+                seancesForCinema.innerHTML += '<p><span id="cinemaName"></span></p>';
+                let cinemaName = document.getElementById("cinemaName");
+                let index = key.indexOf('name=') + 'name='.length;
+                cinemaName.textContent = key.substring(index, key.length - 1);
+                cinemaName.setAttribute('id', 'cinemaName' + countCinema);
+                countCinema++;
+
+                for (let i = 0; i < value.length; i++) {
+
+                    if (value[i].date === buttonValue) {
+
+                        seancesForCinema.innerHTML += '<a id="link"></a>';
+                        let link = document.getElementById("link");
+                        link.href = '/seats/' + value[i].id;
+                        link.innerHTML = '<div id="linkButton" style="font-size: .9375rem; line-height: 20px; position: relative; border-radius: 4px; white-space: nowrap; cursor: pointer; text-align: center; margin: 0 8px 8px 0; display: inline-block;">' +
+                                             '<div style="border: 1px solid #d9d9df; background-color: white; color: red; display: flex; flex-direction: column; border-radius: 4px; min-width: 64px;">' +
+                                                    '<div style="color: red; padding: 4px 12px; line-height: 22px; font-size: 1rem; font-weight: 500;"><span id="beginSession"></span></div>' +
+                                                    '<div style="background-color: red; color: white; line-height: 13px; font-size: .6875rem; display: flex; justify-content: center; border-radius: 0 0 4px 4px; padding: 3px 4px 2px 4px;"><span id="hallNumber"></span></div>' +
+                                            '</div>' +
+                                        '</div>';
+                        link.setAttribute('id', 'link' + value[i].id);
+
+                        let linkButton = document.getElementById("linkButton");
+                        let beginSession = document.getElementById("beginSession");
+                        let hallNumber = document.getElementById("hallNumber");
+
+                        beginSession.textContent = value[i].beginSession.substring(0, 5);
+                        hallNumber.textContent = 'Зал ' + value[i].cinemaHall.number;
+
+                        linkButton.setAttribute('id', 'linkButton' + value[i].id);
+                        beginSession.setAttribute('id', 'beginSession' + value[i].id);
+                        hallNumber.setAttribute('id', 'hallNumber' + value[i].id);
+                    }
+                }
+            }
+            seancesForCinema.innerHTML += '<br><br>';
+        }
+    }
+</script>
+</body>
+</html>

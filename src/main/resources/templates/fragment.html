@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+</head>
+<body>
+    <header th:fragment="header" style="border-bottom: 1px solid #e7e7ec;">
+        <div class="container_header">
+            <a href="/movies" style="margin-right: 48px; display: block; text-decoration: none;">
+                <div style="width: 145px; height: 72px; background-color: red; display: grid; align-items: center; text-align: center;">
+                    <span style="color: white; font-size: 20px; font-weight: bold;">МИР КИНО</span>
+                </div>
+            </a>
+            <div id="email" style="margin-left: 24px; margin-right: 12px;">
+                <a style="text-decoration: none; align-items: center;" href="mailto:emailforsupport@mirkino.ru" target="_blank" rel="noopener noreferrer">
+                    <div style="flex-direction: column; display: flex;">
+                        <span style="color: #727276; font-size: .875rem; line-height: 16px;">Техническая поддержка</span>
+                        <span style="color: red; line-height: 19px; font-size: 1rem; font-weight: 400; opacity: 1;">
+                                    emailforsupport@mirkino.ru
+                                </span>
+                    </div>
+                </a>
+            </div>
+            <div sec:authorize="isAuthenticated()" style="position: absolute; right: 50px; text-align: center">
+                <span sec:authentication="principal.username">Username</span>
+                <form action="/logout" method="post">
+                    <button type="submit" class="login-button logout-button">Выйти</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <nav th:fragment="menu" class="menu">
+        <div class="menu-container">
+            <a class="menu-item" href="/movies">Афиша</a>
+            <a class="menu-item" href="/schedule">Расписание</a>
+            <a class="menu-item" href="/movies/soon">Скоро в кино</a>
+            <a sec:authorize="hasAuthority('ADMIN')" class="menu-item" href="/admin">Администраторам</a>
+            <div sec:authorize="${not isAuthenticated()}" style="position: relative;">
+                <a style="text-decoration: none; cursor: default;" href="/login">
+                    <button class="login-button">Войти</button>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <footer th:fragment="footer" class="footer">
+        <div class="footer-main-section">
+            <div class="footer-column">
+                <h2 style="margin: 0 0 16px 0; font-size: 1.125rem; font-weight: 500; line-height: 22px;">Меню</h2>
+                <div style="line-height: 20px; display: flex; flex-direction: column; align-items: flex-start; position: relative; gap: 5px;">
+                    <a class="footer-links" href="/movies">Афиша</a>
+                    <a class="footer-links" href="/seances">Расписание</a>
+                    <a class="footer-links" href="/movies/soon">Скоро в кино</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <a href="#" style="margin-right: 48px; display: block; text-decoration: none;">
+                    <div style="width: 145px; height: 72px; background-color: red; display: grid; align-items: center; text-align: center;">
+                        <span style="color: white; font-size: 20px; font-weight: bold;">МИР КИНО</span>
+                    </div>
+                </a>
+            </div>
+            <div class="footer-column">
+                <h2 style="margin: 0 0 16px 0; font-size: 1.125rem; font-weight: 500; line-height: 22px; text-align: center;">Кинотеатры</h2>
+            </div>
+        </div>
+        <p style="font-size: .75rem; opacity: .5; margin: 32px; padding-bottom: 30px; color: rgb(120, 120, 120);">
+            Все сеансы начинаются с рекламно-информационного блока.<br>
+            Точную продолжительность сеансов можно уточнить в кинотеатре.
+        </p>
+    </footer>
+</body>
+</html>
