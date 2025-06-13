@@ -21,7 +21,7 @@ public class MovieReadDto {
 
     LocalDate rentEnd;
 
-    String duration;
+    Integer duration;
 
     Pegi pegi;
 

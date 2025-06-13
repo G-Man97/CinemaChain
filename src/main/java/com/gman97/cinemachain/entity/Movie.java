@@ -27,7 +27,7 @@ public class Movie {
 
     private LocalDate rentEnd;
 
-    private String duration;
+    private Integer duration;
 
     @Enumerated(EnumType.STRING)
     private Pegi pegi;

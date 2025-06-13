@@ -66,7 +66,7 @@
         <div class="field">
             <div>
                 <label for="duration">Длительность:
-                    <input type="text" name="duration" id="duration" th:value="${movie.duration}">
+                    <input type="number" name="duration" id="duration" th:value="${movie.duration}" min="40" max="250">
                 </label>
             </div>
             <th:block th:if="${errors}">

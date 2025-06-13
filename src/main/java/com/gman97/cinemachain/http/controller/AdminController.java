@@ -41,16 +41,27 @@ public class AdminController {
     }
 
     @GetMapping("/film-session/{movieId}")
-    public String createFilmSessionPage(@PathVariable Integer movieId, Model model) {
+    public String createFilmSessionPage(@PathVariable Integer movieId, Model model,
+                                        @ModelAttribute("seance") FilmSessionCreateDto filmSessionCreateDto) {
         model.addAttribute("movieId", movieId);
         model.addAttribute("cinemas", cinemaService.findAll());
+        model.addAttribute("seance", filmSessionCreateDto);
         return "createSession";
     }
 
-    @PostMapping("/film-session")
-    public String createFilmSession(@ModelAttribute FilmSessionCreateDto filmSession) {
-        filmSessionService.createFilmSession(filmSession);
-        return "redirect:/movies/" + filmSession.getMovieId();
+    @PostMapping("/film-session/{movieId}")
+    public String createFilmSession(@PathVariable Integer movieId,
+                                    @Valid FilmSessionCreateDto filmSessionCreateDto,
+                                    BindingResult bindingResult,
+                                    RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("seance",filmSessionCreateDto);
+            redirectAttributes.addFlashAttribute("errors", bindingResult);
+            return "redirect:/admin/film-session/" + movieId;
+        }
+
+        filmSessionService.createFilmSession(filmSessionCreateDto);
+        return "redirect:/movies/" + filmSessionCreateDto.getMovieId();
     }
 
     @GetMapping("/movie")

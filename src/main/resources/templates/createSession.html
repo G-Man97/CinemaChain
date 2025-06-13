@@ -3,43 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <title>Создать сеанс</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
 </head>
 <body>
 <div id="content">
 
     <h2>Создать сеанс</h2>
 
-    <form th:action="@{'/admin/film-session'}" method="post">
+    <form th:action="@{'/admin/film-session/' + ${movieId}}" method="post">
 
         <input type="hidden" name="movieId" th:value="${movieId}">
 
-        <label for="cinema">В каком кинотеатре:
-            <select name="cinema" id="cinema" onchange="changeCinemaHalls()">
-                <option hidden selected value=""></option>
-                <option th:each="cinema : ${cinemas}"
-                        th:text="${cinema.name}"
-                        th:value="${cinema.id}">Cinema name
-                </option>
-            </select>
-        </label><br><br>
+        <div class="field">
+            <div>
+                <label for="cinema">В каком кинотеатре:
+                    <select name="cinema" id="cinema" onchange="changeCinemaHalls()">
+                        <option hidden selected value=""></option>
+                        <option th:each="cinema : ${cinemas}"
+                                th:text="${cinema.name}"
+                                th:value="${cinema.id}">Cinema name
+                        </option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="field">
+            <div>
+                <label for="cinemaHallId">Выберите кинозал:
+                    <select name="cinemaHallId" id="cinemaHallId">
+                        <option hidden selected value=""></option>
+                    </select>
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('cinemaHallId')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('cinemaHallId')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="date">Дата:
+                    <input type="date" name="date" id="date" th:value="${seance.date}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('date')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('date')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="time">Время:
+                    <input type="time" name="beginSession" id="time" min="09:00" max="00:00" th:value="${seance.beginSession}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('beginSession') or errors.hasGlobalErrors()}">
+                    <ul class="error">
 
-        <label for="cinemaHallId">Выберите кинозал:
-            <select name="cinemaHallId" id="cinemaHallId">
-                <option hidden selected value=""></option>
-            </select>
-        </label><br><br>
+                        <li th:each="error : ${errors.getFieldErrors('beginSession')}"
+                            th:text="${error.getDefaultMessage()}"></li>
 
-        <label for="date">Дата:
-            <input type="date" name="date" id="date">
-        </label><br><br>
-
-        <label for="time">Время:
-            <input type="time" name="beginSession" id="time">
-        </label><br><br>
-
-        <label for="ticketCost">Стоимость билета:
-            <input type="number" name="ticketCost" id="ticketCost">
-        </label><br><br><br>
+                        <li th:each="global : ${errors.getGlobalErrors()}"
+                            th:text="${global.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+        <div class="field">
+            <div>
+                <label for="ticketCost">Стоимость билета:
+                    <input type="number" name="ticketCost" id="ticketCost" min="250" max="1500" th:value="${seance.ticketCost}">
+                </label>
+            </div>
+            <th:block th:if="${errors}">
+                <div th:if="${errors.hasFieldErrors('ticketCost')}">
+                    <ul class="error">
+                        <li th:each="error : ${errors.getFieldErrors('ticketCost')}"
+                            th:text="${error.getDefaultMessage()}"></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
 
         <button type="submit">Создать сеанс</button>
     </form>

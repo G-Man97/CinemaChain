@@ -34,8 +34,10 @@ public class MovieCreateEditDto {
     @Future(message = "Дата конца проката должна быть в будущем!", groups = CreateAction.class)
     LocalDate rentEnd;
 
-    @NotBlank(message = FIELD_MUST_BE_NOT_EMPTY)
-    String duration;
+    @NotNull(message = FIELD_MUST_BE_NOT_EMPTY)
+    @Min(value = 40, message = "Минимальная длительность фильма для показа в кинотеатре составляет 40 минут")
+    @Max(value = 250, message = "Максимальная длительность фильма 250 минут")
+    Integer duration;
 
     @NotNull(message = FIELD_MUST_BE_NOT_EMPTY)
     @Enumerated(EnumType.STRING)
