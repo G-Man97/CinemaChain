@@ -15,8 +15,8 @@ public class CinemaHallService {
     private final CinemaHallRepository cinemaHallRepository;
     private final CinemaHallFindAllMapper cinemaHallFindAllMapper;
 
-    public CinemaHallFindAllDto[] findByCinemaId(Integer id) {
-        return cinemaHallRepository.findCinemaHallsByCinemaId(id).stream()
+    public CinemaHallFindAllDto[] findAllByCinemaId(Integer id) {
+        return cinemaHallRepository.findAllByCinemaId(id).stream()
                 .map(cinemaHallFindAllMapper::map)
                 .toArray(CinemaHallFindAllDto[]::new);
     }

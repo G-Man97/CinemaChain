@@ -60,9 +60,9 @@ public class MovieReadMapper implements Mapper<Movie, MovieReadDto> {
             Set<Cinema> cinemasFromSessions = foundSessions.stream()
                     .map(it -> it.getCinemaHall().getCinema())
                     .collect(Collectors.toSet());
+            List<FilmSession> sessionsFromOneCinema = new ArrayList<>();
 
             for (Cinema cinema : cinemasFromSessions) {
-                List<FilmSession> sessionsFromOneCinema = new ArrayList<>();
 
                 for (FilmSession session : foundSessions) {
                     if (session.getCinemaHall().getCinema() == cinema) {
@@ -76,6 +76,8 @@ public class MovieReadMapper implements Mapper<Movie, MovieReadDto> {
                         cinemaReadMapper.map(cinema),
                         sessionsFromOneCinema.stream().map(filmSessionReadMapper::map).toList()
                 );
+
+                sessionsFromOneCinema.clear();
             }
             return sessionsByCinema;
         }

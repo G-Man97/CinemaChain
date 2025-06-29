@@ -19,6 +19,6 @@ public class CinemaHallController {
     @GetMapping("/by-cinema-id/{id}")
     @ResponseBody
     public CinemaHallFindAllDto[] findByCinemaId(@PathVariable Integer id) {
-        return cinemaHallService.findByCinemaId(id);
+        return cinemaHallService.findAllByCinemaId(id);
     }
 }

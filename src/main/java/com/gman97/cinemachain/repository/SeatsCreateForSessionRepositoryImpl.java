@@ -10,7 +10,7 @@ public class SeatsCreateForSessionRepositoryImpl implements SeatsCreateForSessio
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String CREATE_TABLE_SQL = """
+    private static final String INSERT_INTO_SEATS_FOR_FILM_SESSIONS = """
             INSERT INTO seats_for_film_sessions (row, seat_no, status, film_session_id, ticket_cost)
             (
                 SELECT
@@ -26,7 +26,7 @@ public class SeatsCreateForSessionRepositoryImpl implements SeatsCreateForSessio
 
     @Override
     public void createSeatsForFilmSession(Long filmSessionId, HallSize hallSize, Integer ticketCost) {
-        jdbcTemplate.execute(CREATE_TABLE_SQL.formatted(filmSessionId,
-                ticketCost, hallSize.toString().toLowerCase()));
+        jdbcTemplate.execute(INSERT_INTO_SEATS_FOR_FILM_SESSIONS.formatted(filmSessionId, ticketCost,
+                hallSize.toString().toLowerCase()));
     }
 }

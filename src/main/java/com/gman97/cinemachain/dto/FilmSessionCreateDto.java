@@ -3,6 +3,7 @@ package com.gman97.cinemachain.dto;
 import com.gman97.cinemachain.validation.CheckSeanceDateAndTime;
 import com.gman97.cinemachain.validation.NotFromMidnightTo9am;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Value;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalTime;
 import static com.gman97.cinemachain.util.ValidationStringUtils.FIELD_MUST_BE_NOT_EMPTY;
 
 @Value
+@Builder
 @CheckSeanceDateAndTime
 public class FilmSessionCreateDto {
 

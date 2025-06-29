@@ -29,7 +29,8 @@ public interface FilmSessionRepository extends JpaRepository<FilmSession, Long> 
 
 @Query("select fs from FilmSession fs " +
         "join fetch fs.movie " +
-        "where fs.cinemaHall.id = :cinemaHallId " +
+        "join fetch fs.cinemaHall ch " +
+        "where ch.id = :cinemaHallId " +
         "and fs.date = :date " +
         "and fs.beginSession between :startInterval and :endInterval")
     List<FilmSession> findAllByCinemaHallIdAndInterval(Integer cinemaHallId, LocalDate date, LocalTime startInterval, LocalTime endInterval);

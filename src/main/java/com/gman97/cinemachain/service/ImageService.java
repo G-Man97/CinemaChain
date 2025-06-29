@@ -1,6 +1,5 @@
 package com.gman97.cinemachain.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +13,13 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 @Service
-@RequiredArgsConstructor
 public class ImageService {
 
-//    @Value("${app.image.bucket}")
-    private final String bucket = "C:\\Users\\Georgy\\IdeaProjects\\CinemaChain\\images";
+    @Value("${app.image.bucket}")
+    private String bucket;
 
-    public void uploadImage(String imagePath, InputStream content) {
-        Path fullImagePath = Path.of(bucket, imagePath);
+    public void uploadImage(String imageName, InputStream content) {
+        Path fullImagePath = Path.of(bucket, imageName);
 
         try(content) {
             Files.createDirectories(fullImagePath.getParent());
@@ -31,8 +29,8 @@ public class ImageService {
         }
     }
 
-    public Optional<byte[]> get(String imagePath) {
-        Path fullImagePath = Path.of(bucket, imagePath);
+    public Optional<byte[]> get(String imageName) {
+        Path fullImagePath = Path.of(bucket, imageName);
 
         try {
             return Files.exists(fullImagePath)

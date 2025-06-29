@@ -9,12 +9,12 @@ public class SeatsForFilmSessionReadMapper implements Mapper<SeatsForFilmSession
 
     @Override
     public SeatsForFilmSessionReadDto map(SeatsForFilmSession object) {
-        return new SeatsForFilmSessionReadDto(
-                object.getId(),
-                object.getRow(),
-                object.getSeatNo(),
-                object.getStatus(),
-                object.getTicketCost()
-        );
+        return SeatsForFilmSessionReadDto.builder()
+                .id(object.getId())
+                .row(object.getRow())
+                .seatNo(object.getSeatNo())
+                .status(object.getStatus())
+                .ticketCost(object.getTicketCost())
+                .build();
     }
 }

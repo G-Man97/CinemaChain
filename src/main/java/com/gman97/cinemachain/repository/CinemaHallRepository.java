@@ -10,5 +10,5 @@ public interface CinemaHallRepository extends JpaRepository<CinemaHall, Integer>
 
     @Query("select ch from CinemaHall ch " +
             "where ch.cinema.id = :id")
-    List<CinemaHall> findCinemaHallsByCinemaId(Integer id);
+    List<CinemaHall> findAllByCinemaId(Integer id);
 }

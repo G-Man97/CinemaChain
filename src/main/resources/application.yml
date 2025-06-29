@@ -1,3 +1,6 @@
+app:
+  image:
+    bucket: C:\Users\Georgy\IdeaProjects\CinemaChain\images
 spring:
   jpa:
     open-in-view: false

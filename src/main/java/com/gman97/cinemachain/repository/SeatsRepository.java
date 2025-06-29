@@ -12,13 +12,12 @@ public interface SeatsRepository extends JpaRepository<SeatsForFilmSession, Long
     @Query("select s from SeatsForFilmSession s " +
             "where s.filmSession.id = :filmSessionId " +
             "order by s.row, s.seatNo")
-    List<SeatsForFilmSession> findByFilmSessionId(Long filmSessionId);
+    List<SeatsForFilmSession> findAllByFilmSessionId(Long filmSessionId);
 
     @Modifying
     @Query("update SeatsForFilmSession s " +
             "set s.status = 'TAKEN' " +
             "where s.id in (:seatIds) " +
-            "and s.status = 'FREE'"
-    )
+            "and s.status = 'FREE'")
     int updateStatusForBoughtSeats(List<Long> seatIds);
 }
