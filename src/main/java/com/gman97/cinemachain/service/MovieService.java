@@ -65,12 +65,18 @@ public class MovieService {
         return movieReadMapper.map(savedMovie);
     }
 
-//    public Optional<byte[]> findPosterByMovieId(Integer id) {
-//        return movieRepository.findById(id)
-//                .map(Movie::getPoster)
-//                .filter(StringUtils::hasText)
-//                .flatMap(imageService::get);
-//    }
+    @Transactional
+    public MovieReadDto updateMovie(MovieCreateEditDto movieCreateEditDto) {
+        Movie movie = movieRepository.saveAndFlush(movieCreateEditMapper.map(movieCreateEditDto));
+        return movieReadMapper.map(movie);
+    }
+
+    @Transactional
+    public MovieReadDto updatePoster(PosterUpdateDto posterUpdateDto) {
+        uploadImage(posterUpdateDto.getPoster());
+        Movie movie = movieRepository.saveAndFlush(posterUpdateMapper.map(posterUpdateDto));
+        return movieReadMapper.map(movie);
+    }
 
     private void uploadImage(MultipartFile image) {
         if (!image.isEmpty()) {
@@ -80,18 +86,5 @@ public class MovieService {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    @Transactional
-    public MovieReadDto updateMovie(MovieCreateEditDto movieCreateEditDto) {
-        Movie movie = movieRepository.saveAndFlush(movieCreateEditMapper.map(movieCreateEditDto));
-        return movieReadMapper.mapWithoutSessions(movie);
-    }
-
-    @Transactional
-    public MovieReadDto updatePoster(PosterUpdateDto posterUpdateDto) {
-        uploadImage(posterUpdateDto.getPoster());
-        Movie movie = movieRepository.saveAndFlush(posterUpdateMapper.map(posterUpdateDto));
-        return movieReadMapper.mapWithoutSessions(movie);
     }
 }

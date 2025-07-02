@@ -127,14 +127,14 @@ class MovieServiceTest {
 
         when(movieCreateEditMapper.map(movieCreateEditDto)).thenReturn(movie);
         when(movieRepository.saveAndFlush(movie)).thenReturn(movie);
-        when(movieReadMapper.mapWithoutSessions(movie)).thenReturn(MovieReadDto.builder().build());
+        when(movieReadMapper.map(movie)).thenReturn(MovieReadDto.builder().build());
 
         var actual = movieService.updateMovie(movieCreateEditDto);
 
         assertThat(actual).isNotNull();
         verify(movieCreateEditMapper).map(movieCreateEditDto);
         verify(movieRepository).saveAndFlush(movie);
-        verify(movieReadMapper).mapWithoutSessions(movie);
+        verify(movieReadMapper).map(movie);
     }
 
     @Test
@@ -145,13 +145,13 @@ class MovieServiceTest {
 
         when(posterUpdateMapper.map(posterUpdateDto)).thenReturn(movie);
         when(movieRepository.saveAndFlush(movie)).thenReturn(movie);
-        when(movieReadMapper.mapWithoutSessions(movie)).thenReturn(MovieReadDto.builder().build());
+        when(movieReadMapper.map(movie)).thenReturn(MovieReadDto.builder().build());
 
         var actual = movieService.updatePoster(posterUpdateDto);
 
         assertThat(actual).isNotNull();
         verify(posterUpdateMapper).map(posterUpdateDto);
         verify(movieRepository).saveAndFlush(movie);
-        verify(movieReadMapper).mapWithoutSessions(movie);
+        verify(movieReadMapper).map(movie);
     }
 }

@@ -37,6 +37,7 @@ public class FilmSessionService {
                                                 filmSessionDto.getTicketCost());
     }
 
+    //TODO Вместо null нужно пробросить исключение и обработать в контроллере
     public SeanceInfoDto findSeanceInfoById(Long filmSessionId) {
         return filmSessionRepository.findSeanceInfoById(filmSessionId)
                 .orElse(null);

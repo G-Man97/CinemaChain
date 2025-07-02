@@ -2,7 +2,7 @@ package com.gman97.cinemachain.integration.service;
 
 import com.gman97.cinemachain.entity.Cinema;
 import com.gman97.cinemachain.integration.IntegrationTestBase;
-import com.gman97.cinemachain.repository.CinemaRepository;
+import com.gman97.cinemachain.mapper.CinemaReadMapper;
 import com.gman97.cinemachain.service.CinemaService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -18,19 +18,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CinemaServiceTest extends IntegrationTestBase {
 
     private final CinemaService cinemaService;
-    private final CinemaRepository cinemaRepository;
+    private final CinemaReadMapper cinemaReadMapper;
 
     @Test
     void findAll() {
+        // Скрипт data.sql накатил 2 кинотеатра
+        var cinema1 = new Cinema(1, "Mir", new ArrayList<>(0));
+        var cinema2 = new Cinema(2, "Galaxy", new ArrayList<>(0));
 
-        var cinema1 = new Cinema(null, "Test", new ArrayList<>());
-        var cinema2 = new Cinema(null, "Test2", new ArrayList<>());
-        cinemaRepository.save(cinema1);
-        cinemaRepository.save(cinema2);
+        var actual = cinemaService.findAll();
 
-        var list = cinemaService.findAll();
-
-        assertThat(list).isNotEmpty();
-        assertThat(list).hasSize(2);
+        assertThat(actual).hasSize(2);
+        assertThat(actual).contains(cinemaReadMapper.map(cinema1), cinemaReadMapper.map(cinema2));
     }
 }

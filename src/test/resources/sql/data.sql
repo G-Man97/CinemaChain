@@ -30,8 +30,10 @@ VALUES (1, '10:00', 1, 1, CURRENT_DATE + 1),
 SELECT SETVAL('film_sessions_id_seq', (SELECT MAX(id) FROM film_sessions));
 
 -- Сохраняем места в кинозалах для для 4-х сеансов выше
-INSERT INTO seats_for_film_sessions (row, seat_no, status, film_session_id, ticket_cost)
-    (SELECT row, seat_no, status, 1, 500 FROM hall_seats WHERE middle_hall_seat_exists = true);
+INSERT INTO seats_for_film_sessions (id, row, seat_no, status, film_session_id, ticket_cost)
+    (SELECT id, row, seat_no, status, 1, 500 FROM hall_seats WHERE middle_hall_seat_exists = true);
+SELECT SETVAL('seats_for_film_sessions_id_seq', (SELECT MAX(id) FROM seats_for_film_sessions));
+
 INSERT INTO seats_for_film_sessions (row, seat_no, status, film_session_id, ticket_cost)
     (SELECT row, seat_no, status, 2, 450 FROM hall_seats WHERE middle_hall_seat_exists = true);
 INSERT INTO seats_for_film_sessions (row, seat_no, status, film_session_id, ticket_cost)

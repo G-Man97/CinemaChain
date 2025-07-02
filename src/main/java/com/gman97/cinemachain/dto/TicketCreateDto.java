@@ -13,6 +13,7 @@ public class TicketCreateDto {
 
     String title;
 
+    //TODO Изменить тип duration со String на Integer и тип cost с Double на Integer
     String duration;
 
     LocalDate date;

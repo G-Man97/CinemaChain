@@ -61,7 +61,6 @@ class SeatsRepositoryTest extends IntegrationTestBase {
 
     @Test
     @DisplayName("updateStatusForBoughtSeats")
-    @Disabled("Flaky")
     void givenSeatIdList_whenUpdateStatusForBoughtSeats_thenReturnQuantityOfUpdatedRows() {
 
         List<Long> nonBoughtSeatIds = List.of(1L, 2L, 3L);
