@@ -2,13 +2,12 @@ package com.gman97.cinemachain.http.controller;
 
 import com.gman97.cinemachain.service.MovieService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
@@ -49,15 +48,4 @@ public class MovieController {
                  })
                  .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-
-//    @GetMapping("/{id}/poster")
-//    @ResponseBody
-//    public ResponseEntity<byte[]> findPoster(@PathVariable Integer id) {
-//        return movieService.findPosterByMovieId(id)
-//                .map(content -> ResponseEntity.ok()
-//                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
-//                        .contentLength(content.length)
-//                        .body(content))
-//                .orElseGet(ResponseEntity.notFound()::build);
-//    }
 }

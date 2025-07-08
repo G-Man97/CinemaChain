@@ -33,6 +33,7 @@ public class TicketService {
             throw new StaleObjectStateException(SeatsForFilmSession.class.getName(), dtosToSeatIdList.toString());
         }
 
+        // TODO Ограничить на клиенте выборку билетов максимум в 5 билетов за раз
         List<TicketReadDto> tickets = new ArrayList<>(5);
 
         for (TicketCreateDto dto : dtos) {

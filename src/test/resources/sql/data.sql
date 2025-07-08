@@ -40,3 +40,7 @@ INSERT INTO seats_for_film_sessions (row, seat_no, status, film_session_id, tick
     (SELECT row, seat_no, status, 3, 530 FROM hall_seats WHERE big_hall_seat_exists = true);
 INSERT INTO seats_for_film_sessions (row, seat_no, status, film_session_id, ticket_cost)
     (SELECT row, seat_no, status, 4, 600 FROM hall_seats WHERE small_hall_seat_exists = true);
+
+INSERT INTO users (id, username, password, role)
+VALUES (1, 'someUser@test.com', '{noop}qwerty12345', 'USER');
+SELECT SETVAL('users_id_seq', (SELECT MAX(id) FROM users));

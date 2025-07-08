@@ -7,14 +7,13 @@ import com.gman97.cinemachain.integration.IntegrationTestBase;
 import com.gman97.cinemachain.mapper.MovieFindAllMapper;
 import com.gman97.cinemachain.mapper.MovieReadMapper;
 import com.gman97.cinemachain.repository.MovieRepository;
-import com.gman97.cinemachain.service.ImageService;
 import com.gman97.cinemachain.service.MovieService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -32,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MovieServiceTest extends IntegrationTestBase {
 
     private final MovieService movieService;
-    private final ImageService imageService;
     private final MovieRepository movieRepository;
     private final MovieReadMapper movieReadMapper;
     private final MovieFindAllMapper movieFindAllMapper;
     private final EntityManager entityManager;
 
-    private final String BUCKET = "C:/Users/Georgy/IdeaProjects/CinemaChain/testDir";
+    @Value("${app.image.bucket}")
+    private String BUCKET;
     private final String IMAGE_NAME = "testImage.jpg";
 
     @Test
@@ -86,7 +85,6 @@ class MovieServiceTest extends IntegrationTestBase {
                 .rentEnd(LocalDate.now().plusDays(30))
                 .poster(new MockMultipartFile(IMAGE_NAME, IMAGE_NAME, "application-octet-stream", new byte[]{1, 2, 3}))
                 .build();
-        ReflectionTestUtils.setField(imageService, "bucket", BUCKET);
 
         var actual = movieService.createMovie(dto);
 
@@ -124,7 +122,6 @@ class MovieServiceTest extends IntegrationTestBase {
     @Test
     void updatePoster() {
         var dto = new PosterUpdateDto(1, new MockMultipartFile(IMAGE_NAME, IMAGE_NAME, "application-octet-stream", new byte[]{1, 2, 3}));
-        ReflectionTestUtils.setField(imageService, "bucket", BUCKET);
 
         var actual = movieService.updatePoster(dto);
 

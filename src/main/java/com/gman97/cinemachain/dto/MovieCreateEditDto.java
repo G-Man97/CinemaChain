@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Value;
+import lombok.experimental.FieldNameConstants;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import static com.gman97.cinemachain.util.ValidationStringUtils.FIELD_MUST_BE_NO
 @Value
 @Builder
 @CheckDates
+@FieldNameConstants
 public class MovieCreateEditDto {
 
     Integer id;
